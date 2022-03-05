@@ -13,6 +13,7 @@ CTEST(suite1, test1) {
     int retVal=-1;
     retVal=Algo_GetVersion(&mylocalVer);
     ASSERT_EQUAL(ALGO_TRUE,retVal);
+    ASSERT_EQUAL(ALGO_VER,mylocalVer);
 }
 
 CTEST(suite1, test2) {
@@ -21,6 +22,7 @@ CTEST(suite1, test2) {
     retVal=Algo_GetVersion(mylocalVer);
     ASSERT_EQUAL(ALGO_FALSE,retVal);
 }
+
 
 int main(int argc, const char *argv[])
 {
