@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "algo.h"
 #include <stdint.h>
+#include "algo.h"
 
 #define CTEST_MAIN
 #define CTEST_SEGFAULT
