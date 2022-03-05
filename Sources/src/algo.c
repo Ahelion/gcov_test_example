@@ -2,11 +2,20 @@
 #include <stdint.h>
 #include "algo.h"
 
+#define ALGO_VER 0xDEADBEEF
+
 int Algo_GetVersion(uint32_t *ver)
 {
-    *ver = 32;
+    int retVal=0;
+    if(ver==NULL)
+    {
+        retVal=ALGO_FALSE;
+    }
+    else
+    {
+        *ver=ALGO_VER;
+        retVal=ALGO_TRUE;
+    }
 
-    printf("called\n");
-
-    return ALGO_TRUE;
+    return retVal;
 }

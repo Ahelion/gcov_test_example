@@ -1,34 +1,63 @@
-# tool macros
-CC = gcc
-CCFLAGS := --coverage
-DBGFLAGS := -g
-CCOBJFLAGS := $(CCFLAGS) -c
-
 # path macros
 BIN_PATH := Bin
 OBJ_PATH := Temp
 DBG_PATH := Debug
 
-SRC=Sources/src/main.c \
-    Sources/src/algo.c
+# tool macros
+CC = gcc
+CCFLAGS := 
+TESTFLAGS := -g --coverage
+
+#check if we run tests
+ifdef TEST
+CCFLAGS := $(CCFLAGS) \
+           $(TESTFLAGS)
+endif
+
+CCOBJFLAGS := $(CCFLAGS)
+
+#main interest
+SRC_ALGO=Sources/src/algo.c
+
+#check if we run tests
+ifdef TEST
+SRC=Sources/tests/main.c
+else
+SRC=Sources/src/main.c
+endif
+
+SRC := $(SRC) $(SRC_ALGO) 
 
 OBJS := $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 
 DIRS := $(dir $(SRC))
-#set directories for make to search
 
+#build includes
+INCS := $(addprefix -I./, $(DIRS))
+
+#set directories for make to search
 vpath %.c $(DIRS)
 
-all:$(BIN_PATH)/target.exe
+#check if we run tests
+ifdef TEST
+.PHONY: clean createFolders runTests
+all:$(BIN_PATH)/target.exe runTests
+else
+.PHONY: clean createFolders
+all:$(BIN_PATH)/target.exe runTests
+endif
+
+
  
 
 $(BIN_PATH)/target.exe: createFolders $(OBJS)
-	$(CC) $(OBJS) -o $(BIN_PATH)/target.exe
+	@echo ++Linking $@
+	@$(CC) $(CCOBJFLAGS) $(OBJS) -o $(BIN_PATH)/target.exe
 
 $(OBJ_PATH)/%.o:%.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+	@echo ++Compiling $< to $@
+	@$(CC) -c $(INCS) $(CCOBJFLAGS) $< -o $@
 
-.PHONY: clean createFolders
 clean:
 	rm -f $(OBJ_PATH)/*
 	rm -f $(BIN_PATH)/*
@@ -37,4 +66,8 @@ createFolders:
 	@echo Creating folder $(OBJ_PATH)
 	@mkdir -p $(OBJ_PATH)
 	@echo Creating folder $(BIN_PATH)
-	@mkdir -p $(BIN_PATH)   
+	@mkdir -p $(BIN_PATH)
+    
+runTests:
+	@echo Running tests: $(BIN_PATH)/target.exe
+	@$(BIN_PATH)/target.exe
