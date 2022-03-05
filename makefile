@@ -7,62 +7,34 @@ CCOBJFLAGS := $(CCFLAGS) -c
 # path macros
 BIN_PATH := Bin
 OBJ_PATH := Temp
-SRC_PATH := Sources/src
 DBG_PATH := Debug
 
-# compile macros
-TARGET_NAME := main
-ifeq ($(OS),Windows_NT)
-	TARGET_NAME := $(addsuffix .exe,$(TARGET_NAME))
-endif
-TARGET := $(BIN_PATH)/$(TARGET_NAME)
-TARGET_DEBUG := $(DBG_PATH)/$(TARGET_NAME)
+SRC=Sources/src/main.c \
+    Sources/src/algo.c
 
-# src files & obj files
-SRC := $(foreach x, $(SRC_PATH), $(wildcard $(addprefix $(x)/*,.c*)))
-OBJ := $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
-OBJ_DEBUG := $(addprefix $(DBG_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
+OBJS := $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 
-# clean files list
-DISTCLEAN_LIST := $(OBJ) \
-                  $(OBJ_DEBUG)
-CLEAN_LIST := $(TARGET) \
-			  $(TARGET_DEBUG) \
-			  $(DISTCLEAN_LIST)
+DIRS := $(dir $(SRC))
+#set directories for make to search
 
-# default rule
-default: makedir all
+vpath %.c $(DIRS)
 
-# non-phony targets
-$(TARGET): $(OBJ)
-	$(CC) $(CCFLAGS) -o $@ $(OBJ)
+all:$(BIN_PATH)/target.exe
+ 
 
-$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c*
-	$(CC) $(CCOBJFLAGS) -o $@ $<
+$(BIN_PATH)/target.exe: createFolders $(OBJS)
+	$(CC) $(OBJS) -o $(BIN_PATH)/target.exe
 
-$(DBG_PATH)/%.o: $(SRC_PATH)/%.c*
-	$(CC) $(CCOBJFLAGS) $(DBGFLAGS) -o $@ $<
+$(OBJ_PATH)/%.o:%.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-$(TARGET_DEBUG): $(OBJ_DEBUG)
-	$(CC) $(CCFLAGS) $(DBGFLAGS) $(OBJ_DEBUG) -o $@
-
-# phony rules
-.PHONY: makedir
-makedir:
-	@mkdir -p $(BIN_PATH) $(OBJ_PATH) $(DBG_PATH)
-
-.PHONY: all
-all: $(TARGET)
-
-.PHONY: debug
-debug: $(TARGET_DEBUG)
-
-.PHONY: clean
+.PHONY: clean createFolders
 clean:
-	@echo CLEAN $(CLEAN_LIST)
-	@rm -f $(CLEAN_LIST)
+	rm -f $(OBJ_PATH)/*
+	rm -f $(BIN_PATH)/*
 
-.PHONY: distclean
-distclean:
-	@echo CLEAN $(DISTCLEAN_LIST)
-	@rm -f $(DISTCLEAN_LIST)
+createFolders:
+	@echo Creating folder $(OBJ_PATH)
+	@mkdir -p $(OBJ_PATH)
+	@echo Creating folder $(BIN_PATH)
+	@mkdir -p $(BIN_PATH)   
