@@ -5,6 +5,7 @@ DBG_PATH := Debug
 
 # tool macros
 CC = gcc
+GCOV = gcov
 CCFLAGS := 
 TESTFLAGS := -g --coverage
 
@@ -40,11 +41,11 @@ vpath %.c $(DIRS)
 
 #check if we run tests
 ifdef TEST
-.PHONY: clean createFolders runTests
-all:$(BIN_PATH)/target.exe runTests
+.PHONY: clean createFolders runTests getCoverage
+all:$(BIN_PATH)/target.exe runTests getCoverage
 else
 .PHONY: clean createFolders
-all:$(BIN_PATH)/target.exe runTests
+all:$(BIN_PATH)/target.exe
 endif
 
 
@@ -71,3 +72,7 @@ createFolders:
 runTests:
 	@echo Running tests: $(BIN_PATH)/target.exe
 	@$(BIN_PATH)/target.exe
+
+getCoverage:
+	@echo Ghatering coverage for: $(BIN_PATH)/target.exe
+	@$(GCOV) -b -j --object-directory $(OBJ_PATH) $(SRC_ALGO)
