@@ -3,10 +3,13 @@ BIN_PATH := Bin
 OBJ_PATH := Temp
 DBG_PATH := Debug
 
+#target name
+TARGET=target.exe
+
 # tool macros
 CC = gcc
 GCOV = gcov
-CCFLAGS := 
+CCFLAGS := -o1
 TESTFLAGS := -g --coverage
 
 #check if we run tests
@@ -22,15 +25,21 @@ SRC_ALGO=Sources/src/algo.c
 
 #check if we run tests
 ifdef TEST
-SRC=Sources/tests/main.c
+MAIN=tests
+TEST_TARGETS= runTests getCoverage
 else
-SRC=Sources/src/main.c
+MAIN=src
 endif
 
+SRC=Sources/$(MAIN)/main.c
+
+#create list of all sources
 SRC := $(SRC) $(SRC_ALGO) 
 
+#create objects name
 OBJS := $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 
+#all directories
 DIRS := $(dir $(SRC))
 
 #build includes
@@ -39,40 +48,33 @@ INCS := $(addprefix -I./, $(DIRS))
 #set directories for make to search
 vpath %.c $(DIRS)
 
-#check if we run tests
-ifdef TEST
-.PHONY: clean createFolders runTests getCoverage
-all:$(BIN_PATH)/target.exe runTests getCoverage
-else
-.PHONY: clean createFolders
-all:$(BIN_PATH)/target.exe
-endif
+all:$(BIN_PATH)/$(TARGET) $(TEST_TARGETS)
 
-
+.PHONY: clean createFolders $(TEST_TARGETS)
  
 
-$(BIN_PATH)/target.exe: createFolders $(OBJS)
+$(BIN_PATH)/$(TARGET): createFolders $(OBJS)
 	@echo ++Linking $@
-	@$(CC) $(CCOBJFLAGS) $(OBJS) -o $(BIN_PATH)/target.exe
+	@$(CC) $(CCOBJFLAGS) $(OBJS) -o $(BIN_PATH)/$(TARGET)
 
 $(OBJ_PATH)/%.o:%.c
 	@echo ++Compiling $< to $@
-	@$(CC) -c $(INCS) $(CCOBJFLAGS) $< -o $@
+	@$(CC) $(INCS) $(CCOBJFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJ_PATH)/*
 	rm -f $(BIN_PATH)/*
 
 createFolders:
-	@echo Creating folder $(OBJ_PATH)
+	@echo ++Creating folder $(OBJ_PATH)
 	@mkdir -p $(OBJ_PATH)
-	@echo Creating folder $(BIN_PATH)
+	@echo ++Creating folder $(BIN_PATH)
 	@mkdir -p $(BIN_PATH)
     
 runTests:
-	@echo Running tests: $(BIN_PATH)/target.exe
-	@$(BIN_PATH)/target.exe
+	@echo ++Running tests: $(BIN_PATH)/$(TARGET)
+	@$(BIN_PATH)/$(TARGET)
 
 getCoverage:
-	@echo Ghatering coverage for: $(BIN_PATH)/target.exe
+	@echo ++Ghatering coverage for: $(BIN_PATH)/$(TARGET)
 	@$(GCOV) -b -j --object-directory $(OBJ_PATH) $(SRC_ALGO)
