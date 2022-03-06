@@ -103,7 +103,7 @@ int Algo_SetPointerToString(uint8_t* string_ps)
         //only 64 characters allowed
         if(size<=ALGO_MAX_SIZE_DATA*2)
         {
-            memcpy(algo_string_ptr,string_ps,size-1);
+            memcpy(algo_string_ptr,string_ps,size);
             
             algo_global_string_ptr=&algo_string_ptr[0];
             
@@ -131,7 +131,8 @@ int Algo_GetResultToString(uint8_t* outString, uint16_t* size)
         memcpy(&outString[7], (uint8_t*)&algo_srec_line_st.data, algo_srec_line_st.byte_count_u8-4-1);
         outString[7 + algo_srec_line_st.byte_count_u8 - 4 - 1] = algo_srec_line_st.crc;
 
-        *size = algo_srec_line_st.byte_count_u8;
+        //add also the first 3 things
+        *size = algo_srec_line_st.byte_count_u8+3;
     }
     return ALGO_TRUE;
 }

@@ -7,9 +7,16 @@ DBG_PATH := Debug
 TARGET=target.exe
 
 # tool macros
+#tests we run under linux or cigwin, for github action
+ifdef TEST
 CC = gcc
-GCOV = gcov
-CCFLAGS := -o1
+GCOV =gcov
+else
+CC = D:/TDM-GCC-64/bin/gcc.exe
+GCOV =D:/TDM-GCC-64/bin/gcov.exe
+endif
+
+CCFLAGS := -o1 -g
 TESTFLAGS := -g --coverage
 
 #check if we run tests
@@ -64,6 +71,7 @@ $(OBJ_PATH)/%.o:%.c
 clean:
 	rm -f $(OBJ_PATH)/*
 	rm -f $(BIN_PATH)/*
+	rm -f *.gcov
 
 createFolders:
 	@echo ++Creating folder $(OBJ_PATH)
