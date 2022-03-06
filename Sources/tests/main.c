@@ -24,6 +24,11 @@ CTEST(suite1, test2) {
     ASSERT_EQUAL(ALGO_FALSE,retVal);
 }
 
+CTEST(suite1, test3) {
+    int retVal;
+    retVal = Algo_SetPointerToString(NULL);
+    ASSERT_EQUAL(ALGO_FALSE, retVal);
+}
 
 int main(int argc, const char *argv[])
 {

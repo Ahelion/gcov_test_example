@@ -77,4 +77,4 @@ runTests:
 
 getCoverage:
 	@echo ++Ghatering coverage for: $(BIN_PATH)/$(TARGET)
-	@$(GCOV) -b -j --object-directory $(OBJ_PATH) $(SRC_ALGO)
+	@$(GCOV) -b --object-directory $(OBJ_PATH) $(SRC_ALGO)
