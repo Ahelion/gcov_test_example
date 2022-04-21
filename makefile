@@ -12,8 +12,8 @@ ifdef TEST
 CC = gcc
 GCOV =gcov
 else
-CC = D:/TDM-GCC-64/bin/gcc.exe
-GCOV =D:/TDM-GCC-64/bin/gcov.exe
+CC = D:/tools/gcc-8.2.0/bin/gcc.exe
+GCOV =D:/tools/gcc-8.2.0/bin/gcov.exe
 endif
 
 CCFLAGS := -o1 -g
